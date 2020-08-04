@@ -2,6 +2,7 @@
 
 using namespace std ;
 
+// !!! Root( r ) is 1 
 struct segtree{
     vector<int> st, prop;
 
