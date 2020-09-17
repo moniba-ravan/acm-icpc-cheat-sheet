@@ -2,18 +2,31 @@
 
 using namespace std;
 
-int substr_search(string sub, string s, vector<int> &p){
-    int l = 0, r = s.size() - 1;
-    int n = s.size();
-    while(l <= r){ // !!check equal
-        int mid = ( l + r ) >> 1;
-        int temp = sub.compare(s.substr(p[mid],min((int)sub.size(),n - p[mid])));
-        if( temp == 0 )
-            return mid;// exists
-        if( temp > 0 ) l = mid + 1;
-        else r = mid - 1;
+int substr_count(string sub, string s, vector<int> &p){
+    int lowerb=s.size(), upperb=0;
+    {
+        int l = 0, r = s.size() - 1;
+        int n = s.size();
+        while(l <= r){ // !!check equal
+            int mid = ( l + r ) >> 1;
+            int temp = sub.compare(s.substr(p[mid],min((int)sub.size(),n - p[mid])));
+            if( temp == 0 ) lowerb = mid; // or return mid; for existance
+            if( temp > 0 ) l = mid + 1;
+            else r = mid - 1;
+        }
     }
-    return -1;// not exists
+    {
+        int l = 0, r = s.size() - 1;
+        int n = s.size();
+        while(l <= r){ // !!check equal
+            int mid = ( l + r ) >> 1;
+            int temp = sub.compare(s.substr(p[mid],min((int)sub.size(),n - p[mid])));
+            if( temp == 0 ) upperb = mid;
+            if( temp >= 0 ) l = mid + 1;
+            else r = mid - 1;
+        }
+    }
+    return max(0,upperb - lowerb + 1);
 }
 
 void count_sort(vector<int> &p, vector<int> &c ){
@@ -88,8 +101,8 @@ int main(){
 
     string sub;
     cin >> sub;
-    int ans = substr_search(sub, s, p);
-    if( ans == -1 ) cout << "Not Exists" << '\n';
-    else cout << "Exists" << '\n';
+    int ans = substr_count(sub, s, p);
+    if( ans == 0 ) cout << "Not Exists" << '\n';
+    else cout << ans << " time occurs"<< '\n';
     return 0;
 }
