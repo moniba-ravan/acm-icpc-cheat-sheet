@@ -2,7 +2,18 @@
 
 using namespace std;
 
-int substr_count(string sub, string s, vector<int> &p){
+void make_lcp(string &s, vector<int> &p, vector<int> &c, vector<int> &lcp){
+    int n = s.size();
+    int k = 0;
+    for( int i = 0 ; i < n ; i ++ ){
+        if( c[ i ] == 0 ) continue; // $ or #
+        int j = p[ c[ i ] - 1];
+        while( s[ i + k ] == s[ j + k ]) k ++;
+        lcp[ c[ i ] ] = k;
+        k = max( 0, k - 1);
+    }
+}
+int substr_count(string &sub, string &s, vector<int> &p){
     int lowerb=s.size(), upperb=0;
     {
         int l = 0, r = s.size() - 1;
@@ -46,7 +57,7 @@ void count_sort(vector<int> &p, vector<int> &c ){
     p = new_p;
 }
 
-void suffix_array(string s, vector<int> &p, vector<int> &c){
+void suffix_array(string &s, vector<int> &p, vector<int> &c){
     int n = s.size();
     {
         // k = 0
@@ -72,8 +83,8 @@ void suffix_array(string s, vector<int> &p, vector<int> &c){
             for( int i = 0 ; i < n ; i ++ )
                 p[ i ] =(p[ i ] - ( 1 << k ) + n ) % n ;
             count_sort(p, c);
+            
             vector<int> new_c(n);
-
             new_c[ p[ 0 ] ] = 0;
             for( int i = 1; i < n ; i ++ ){
                 pair< int, int > pre, now;
@@ -87,22 +98,29 @@ void suffix_array(string s, vector<int> &p, vector<int> &c){
             k++;
         }
     }
-    /*for( int i = 0 ; i < n ; i ++ )
-        cout << p[ i ] <<' '<<s.substr(p[ i ], n - p[ i ] ) <<'\n';
-    */
 }
+
 int main(){
     string s;
     cin >> s;
     s += "$";
     int n = s.size();
-    vector<int> p(n), c(n);
+    vector<int> p(n), c(n), lcp(n);
     suffix_array(s, p, c);
 
     string sub;
     cin >> sub;
     int ans = substr_count(sub, s, p);
-    if( ans == 0 ) cout << "Not Exists" << '\n';
-    else cout << ans << " time occurs"<< '\n';
+    if( ans == 0 ) cout << "Not Exists." << '\n';
+    else cout << "occurs " << ans << " times."<< '\n';
+
+    make_lcp(s, p, c, lcp);
+    // additional
+    long long no_dif_substr = 0; // number of different substring
+    for(int i = 0 ; i < n ; i ++ ){
+        if( s[ i ] == '$' || s[ i ] == '#' )
+            continue;
+        no_dif_substr += (n - 1 - i) - lcp[ c[ i ] ];
+    }
     return 0;
 }
