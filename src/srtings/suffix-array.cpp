@@ -6,7 +6,7 @@ void make_lcp(string &s, vector<int> &p, vector<int> &c, vector<int> &lcp){
     int n = s.size();
     int k = 0;
     for( int i = 0 ; i < n ; i ++ ){
-        if( c[ i ] == 0 ) continue; // $ or #
+        if( c[ i ] == 0 ) continue; // ' ' 
         int j = p[ c[ i ] - 1];
         while( s[ i + k ] == s[ j + k ]) k ++;
         lcp[ c[ i ] ] = k;
@@ -103,7 +103,7 @@ void suffix_array(string &s, vector<int> &p, vector<int> &c){
 int main(){
     string s;
     cin >> s;
-    s += "$";
+    s += ' ';
     int n = s.size();
     vector<int> p(n), c(n), lcp(n);
     suffix_array(s, p, c);
@@ -118,7 +118,7 @@ int main(){
     // additional
     long long no_dif_substr = 0; // number of different substring
     for(int i = 0 ; i < n ; i ++ ){
-        if( s[ i ] == '$' || s[ i ] == '#' )
+        if( s[ i ] == ' ')
             continue;
         no_dif_substr += (n - 1 - i) - lcp[ c[ i ] ];
     }
